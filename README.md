@@ -1,14 +1,11 @@
 # CI-CD-And-Aws-Notes
-##
-**Most of these are rough notes to avoid any conflict of interest with my former employer**
-###
-Some notes on CI/CD tools and setup in AWS
-Some of these topics may overlap so content is maybe located else where in the repository
-###
-Tools which I have created or modified for DevOps purposes
-Many of these are Java based so that they are platform independant
+## **Most of these are rough notes to avoid any conflict of interest with my former employer**
+### Some CI/CD notes and tools in my Github repositories
 
+1. CI/CD Pipeline related
 * Docker.md in this repository regarding notes on creating rootless Docker images in a CI/CD pipeline
+
+2. Indirectly CI/CD related
 * [A tool to quickly test database authentication and up/down](https://github.com/annahosanna/JDBC-Connection-Quick-Test)
 * The basis for an alerting Slack client [Java-Tail](https://github.com/annahosanna/Java-Tail) for CI/CD operational alerts
 * [Clone of AWS repo for cross region session state](https://github.com/annahosanna/aws-dynamodb-session-tomcat)
