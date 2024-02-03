@@ -3,7 +3,7 @@
 ### Some CI/CD notes and tools in my Github repositories
 
 1. CI/CD Pipeline related
-* Docker.md in this repository regarding notes on creating rootless Docker images in a CI/CD pipeline
+* Docker.md contains notes regarding creating rootless Docker images in a CI/CD pipeline.
 
 2. Indirectly CI/CD related
 * [A tool to quickly test database authentication and up/down](https://github.com/annahosanna/JDBC-Connection-Quick-Test)
