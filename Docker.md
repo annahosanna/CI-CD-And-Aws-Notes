@@ -1,11 +1,17 @@
 ## This is mostly dedicated to the creation and execution of Dockerfiles/Images in a rootless environment
 
 ```
-https://github.com/GoogleContainerTools/kaniko
-https://github.com/google/go-containerregistry
-https://gitlab.com/proot/proot/-/pipelines
-https://www.busybox.net/
-might need to build perl for git. And I am not sure about ssh 
+* A rootless Docker image builder with a fair number of restrictions for Kubernetes. The OS on this will need to be reconstructed.
+- https://github.com/GoogleContainerTools/kaniko
+* Upload tools for your favorite image repositlory
+- https://github.com/google/go-containerregistry
+* Chroot like tool under which the new Docker image will be built.
+- https://gitlab.com/proot/proot/-/pipelines
+* Provide replacements for the Linux tools whos installers do not work without Systemd 
+- https://www.busybox.net/
+
+Other notes:
+Some application like perl and maybe OpenSSH will need to be recompiled so that they do not rely on Systemd 
 ```
 
 ### Random Dockerfile notes ###
