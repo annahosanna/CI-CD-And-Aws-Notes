@@ -1,6 +1,6 @@
 # CI-CD-And-Aws-Notes
 ###
-** Most of these are rough notes to avoid any conflict of interest with my former employer **
+**Most of these are rough notes to avoid any conflict of interest with my former employer**
 ###
 Some notes on CI/CD tools and setup in AWS
 Some of these topics may overlap so content is maybe located else where in the repository
