@@ -131,3 +131,5 @@ COPY --from=secondthing / /second/
   * Add another entry to the array of images in the Task Definition. These can then share resources, but run as two seperate containers.
     1. Good for being able to upgrade one container image without affecting the other.
   * An ECS Fargate Metadata to EC2 Metadata mock. Some software assumes EC2, doesn't understand where to get ECS metadata. A mock that combines iptables, the ECS Metadata and some API calls to produce something that looks like EC2 Metadata would be useful for software compatibility.
+
+## ------------------------------------------
