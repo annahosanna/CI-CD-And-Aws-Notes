@@ -133,3 +133,28 @@ COPY --from=secondthing / /second/
   * An ECS Fargate Metadata to EC2 Metadata mock. Some software assumes EC2, doesn't understand where to get ECS metadata. A mock that combines iptables, the ECS Metadata and some API calls to produce something that looks like EC2 Metadata would be useful for software compatibility.
 
 ---
+
+```
+# Example of a Docker image which can build another Docker image in Fargate
+# To Do
+#
+# Gitlab client in container - so that building containers can be part of a pipeline
+# Remember gitlab passes the ssh key in the environment variables when the container starts
+# To import an environment variable: export $(strings /proc/1/environ | grep ENV_VAR_NAME)
+# Also the sshd encryption algorithms which are enabled may need to be tweaked in sshd.conf
+# Build Non systemd versions of OpenSSH and Git
+# Install BusyBox
+# Google kaniko for image builds
+# Kaniko assumes (almost) everything in the filesystem is for the new image.
+# Proot gives kaniko a false root to work in, thus enabling a Docker container which can build docker images
+# crane from https://github.com/google/go-containerregistry for repository access to upload resulting images to.
+# This configuration also enables aquasec to scan the layers of the container which was just built.
+# Enable SYS_PTRACE for proot when Fargate container is started
+# Install Tini, https://github.com/krallin/tini, and set your entrypoint to Tini
+#
+# Ok so the above create a Fargate Gitlab build node which can build containers
+# Next is the issue of actually building a container with that setup
+# As soon as many of the common tools are installed on the container being built they will require systemd
+# See the instructions above for dealing with systemd
+# If all you are doing is java then you should be able to use a non systemd install of Java.
+```
