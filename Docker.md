@@ -158,3 +158,7 @@ COPY --from=secondthing / /second/
 # See the instructions above for dealing with systemd
 # If all you are doing is java then you should be able to use a non systemd install of Java.
 ```
+Here is a little ChatGPT snippet to get the Dockerfile started. It doesn't build OpenSSH without unneccassary dependancies. It doesn't install the Gitlab client. It doesn't include crane, and I haven't checked it for correctness.
+```
+Write a Dockerfile which is based on the Busybox image, then install curl-devel, then build OpenSSH from source code without tcl/tk and GetText, and build Git from source code without tcl/tk and GetText, and then enable RSA in sshd.conf, then install the Gitlab client, import the Gitlab client ssh key from /dev/1/environ/SSH_KEY (spllitting the value on the "=" sign) at runtime, set up proot, proot should exclude /etc/mtab, etc/resolv.conf, /etc/hosts, /etc, /sys, and /proc and execute kaniko using proot in a subdirectory, and execute the Entrypoint using Tini, and then create the Cloudformation which executes this Fargate container with SYS_PTRACE enabled.
+```
