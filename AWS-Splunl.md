@@ -10,12 +10,12 @@ The data from the log group can then be sent to S3 and Splunk is triggered to po
 Create an alert with the target of a sqs queue, which then has events dequeued by sns. Sns then forwards to a Lambda which adds suplementry information such as the region, account number (from arn) or something implied from the sns name. Then put that into a json format and use it as the event data.
 ```
 {
-  "time": 123, # Time since epoch
+  "_time": 123, # Time since epoch
   "host": "a.reporting.instance.local", # could be arn of reporting lambda
   "source": "something", # For instance the log group name
   "sourcetype": "aws:cloudwatch", # something like that
   "index": "aws", # or aws account number or whatever
-  "event": {
+  "_raw": {
     "field1": "value1",
     "field2": "value2"
   }
