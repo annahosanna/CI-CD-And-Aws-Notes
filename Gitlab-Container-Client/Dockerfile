@@ -2,10 +2,11 @@ FROM amazonlinux:2023
 
 # Install Busybox and development tools
 RUN yum update -y && \
-    yum install -y busybox curl-devel gcc gcc-c++ make openssl-devel zlib-devel autoconf automake libtool
+    yum install -y busybox curl-devel gcc gcc-c++ make openssl-devel zlib-devel autoconf automake libtool krb5-libs libicu openssl-libs zlib
 
-# Install CA certificates
-RUN yum install -y ca-certificates
+RUN yum update -y && \
+    yum install -y ca-certificates socklog java-17-openjdk-headless wget openssl-devel pam-devel zlib-devel dotnet-sdk-6.0 \
+    && yum clean all
 
 # Build and install OpenSSH from source
 WORKDIR /tmp
@@ -33,8 +34,14 @@ RUN echo "RSAAuthentication yes" >> /etc/ssh/sshd_config && \
 RUN curl -s https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.rpm.sh | bash && \
     yum install -y gitlab-ce
 
+# Create gitlab-ce user and directory
+RUN useradd -ms /bin/bash gitlab-ce
+
+# Install Tini
+RUN curl -Lo /tini https://github.com/krallin/tini/releases/download/v0.19.0/tini-static && chmod +x /tini
+
 # Install proot and tini
-RUN yum install -y proot tini
+RUN yum install -y proot
 
 # Create entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
