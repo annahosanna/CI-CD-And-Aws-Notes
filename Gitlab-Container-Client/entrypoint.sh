@@ -8,7 +8,7 @@ if [ -n "$SSH_KEY" ]; then
     chown gitlab-ce:gitlab-ce /home/gitlab-ce/.ssh/id_rsa
 fi
 
-# Also need to configure /dev/log for socklog
+# Also need to configure /dev/log for socklog /var/log/messages etc.
 
 # Start SSH daemon
 /usr/sbin/sshd
