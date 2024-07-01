@@ -43,6 +43,9 @@ RUN curl -Lo /tini https://github.com/krallin/tini/releases/download/v0.19.0/tin
 # Install proot and tini
 RUN yum install -y proot
 
+RUN echo $(dirname $(dirname $(which java | tr -d '[:space:]!')))"/lib"
+RUN ldconfig
+
 # Create entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
