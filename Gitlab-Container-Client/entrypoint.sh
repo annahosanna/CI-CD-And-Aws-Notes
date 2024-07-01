@@ -8,12 +8,15 @@ if [ -n "$SSH_KEY" ]; then
     chown gitlab-ce:gitlab-ce /home/gitlab-ce/.ssh/id_rsa
 fi
 
+# Start SSH daemon
+/usr/sbin/sshd
+
 # Execute proot with exclusions and run Kaniko
 exec proot \
     -b /kaniko:/kaniko \
     -b /home/gitlab-ce:/home/gitlab-ce \
-    -b /etc/mtab -b /etc/resolv.conf -b /etc/hosts \
+    -b /etc/mtab -b /etc/resolv.conf -b /etc/hosts -r / -b /dev -b /sys -b /proc \
     /kaniko/executor --context /kaniko --dockerfile /kaniko/Dockerfile --destination $IMAGE_NAME
 
-# Keep the container running
-exec sleep infinity
+# Infinite sleep
+sleep infinity
