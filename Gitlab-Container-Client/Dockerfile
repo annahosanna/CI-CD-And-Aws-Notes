@@ -28,7 +28,7 @@ RUN curl -LO https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.4p1.
     yum clean all
 
 # Build and install OpenSSH from source without tcl/tk and GetText
-RUN curl -LO https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.8p1.tar.gz && \
+RUN curl -LO https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-9.7p1.tar.gz && \
     tar -xzf openssh-9.7p1.tar.gz && \
     cd openssh-9.7p1 && \
 >>>>>>> 0f251fa (Make changes to Dockerfile)
@@ -62,10 +62,10 @@ RUN \
     make install
 
 
-RUN wget https://busybox.net/downloads/binaries/1.35.0-x86_64/busybox && \
-    mv busybox /bin/busybox && chmod +x /bin/busybox && \
-    ln -s /bin/busybox /bin/sh && \
-    ln -s /bin/busybox /bin/ash
+# RUN wget https://busybox.net/downloads/binaries/1.35.0-x86_64/busybox && \
+#     mv busybox /bin/busybox && chmod +x /bin/busybox && \
+#     ln -s /bin/busybox /bin/sh && \
+#     ln -s /bin/busybox /bin/ash
 # RUN yum install -y busybox
 
 # This isn't quite right as kaniko is the name of the program
