@@ -44,7 +44,7 @@ ads = ADS.ADS1015(i2c)
 #            |--*--P1
 # Vcc = 9v battery + 7805
 # R3 creates a current divider with resistance = R1 + R2
-# R2 + R1 used to create a 3.3 volt volage divider
+# R2 & R1 used to create a 3.3 volt volage divider
 # Place INA219 behind a resistor
 # '*' are sample points for 5 and 3.3 volts ADS1015
 # Put current sensor in series
@@ -53,7 +53,6 @@ ads = ADS.ADS1015(i2c)
 # Selecting correct value resistors important to current
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
 # E24 = 5% resistor rating
-
 # Sample ground to get realitive voltage, as it may float
 
 
