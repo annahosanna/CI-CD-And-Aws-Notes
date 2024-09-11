@@ -6,9 +6,16 @@ import adafruit_ads1x15.ads1015 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 import adafruit_ina219
 
-# Notes:
-# Circuit example which combines the two to measure volatage and current
-# https://www.instructables.com/Arduino-Voltage-and-Current-Measurement-ACS712-ADS/
+# apt install python
+# apt install git
+# pip3 install --upgrade pip
+# Creat a virtual python environment:
+# python3 -m venv /path/to/new/virtual/environment
+# use the pip3 in the virtual environment to install python
+#   packages in the virtual environment
+# /path/to/new/virtual/environment/bin/pip3 install Adafruit-Blinka
+# /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ads1x15
+# /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ina219
 
 # Create the I2C bus
 i2c = busio.I2C(board.SCL, board.SDA)
@@ -20,46 +27,39 @@ i2c = busio.I2C(board.SCL, board.SDA)
 # Create the ADC object using the I2C bus
 ads = ADS.ADS1015(i2c)
 
-# AnalogIn(ads: ADS1x15, positive_pin: int, negative_pin: int | None = None)
-# Integer constants are: ADS.P0, ADS.P1, ADS.P2, ADS.P3
-# Note: P0 - P3 are Vin, gnd is shared with ADC.
-# !! So when your testing this, your 3.3 volt and 5 volt pins which you want to measure must share a common ground !!
-
-  # Best values are R1 = 4.7K; R2 = 9.1K
-#
 # |----|--Rvar--|
 # |    |        |
 # |    |        R2
 # |    |        |
-# |    |        *--P0
+# |    |        ---|>|--*--P0
 # |    /        |
 # |    |        INA219
 # |    R3       |
-# Vcc  |        -----*--P2
+# Vcc  |        ---|>|--*--P2
 # |    |        |
 # |    |        R1
 # |    |        |
-# |----|-----|--|----*--P3
+# |----|-----|--|--|<|--*--P3
 #            |
-#            |--*--P1
+#            |--|<|--*--P1
 # Vcc = 9v battery + 7805
 # R3 creates a current divider with resistance = R1 + R2
 # R2 & R1 used to create a 3.3 volt volage divider
-# Place INA219 behind a resistor
+# Place INA219, in series, behind a resistor, just in case
 # '*' are sample points for 5 and 3.3 volts ADS1015
-# Put current sensor in series
 # Rvar controls volage divider (should be 0 ohm normally)
 # R1 = 4700 ohm, R2 = 9100 ohm, R3 = 13800 ohm + on/off switch
 # Selecting correct value resistors important to current
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
 # E24 = 5% resistor rating
 # Sample ground to get realitive voltage, as it may float
+# Note: P0 - P3 are Vin, is gnd shared with ADC? That would mean the circiut must share a common ground with the pi
+# Put some diodes in so there is no back voltage sucked from sensor
 
-
-# Create single-ended input on channel 0
+# AnalogIn(ads: ADS1x15, positive_pin: int, negative_pin: int | None = None)
+# Integer constants are: ADS.P0, ADS.P1, ADS.P2, ADS.P3
 chan_5v = AnalogIn(ads, ADS.P0, ADS.P1)
 chan_3_3v = AnalogIn(ads, ADS.P2, ADS.P3)
-# Optionally this can take two arguments if for instance you wanted to Latch at a particular voltage differential
 
 # https://docs.circuitpython.org/projects/ina219/en/latest/api.html
 # Create the INA219 object
