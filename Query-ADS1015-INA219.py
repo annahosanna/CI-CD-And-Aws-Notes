@@ -25,12 +25,6 @@ ads = ADS.ADS1015(i2c)
 # Note: P0 - P3 are Vin, gnd is shared with ADC.
 # !! So when your testing this, your 3.3 volt and 5 volt pins which you want to measure must share a common ground !!
 
-# A simple volatage divider should work:
-  # Vin = 5
-  # Vout = 3.3
-  # Selecting correct value resistors important to current
-  # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Problem:,or%20as%20few%20as%20one.
-  # E24 = 5% resistor rating
   # Best values are R1 = 4.7K; R2 = 9.1K
 #
 # |----|--Rvar--|
@@ -56,6 +50,10 @@ ads = ADS.ADS1015(i2c)
 # Put current sensor in series
 # Rvar controls volage divider (should be 0 ohm normally)
 # R1 = 4700 ohm, R2 = 9100 ohm, R3 = 13800 ohm + on/off switch
+# Selecting correct value resistors important to current
+# https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
+# E24 = 5% resistor rating
+
 # Sample ground to get realitive voltage, as it may float
 
 
