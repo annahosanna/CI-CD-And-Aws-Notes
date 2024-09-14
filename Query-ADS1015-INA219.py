@@ -27,27 +27,34 @@ i2c = busio.I2C(board.SCL, board.SDA)
 # Create the ADC object using the I2C bus
 ads = ADS.ADS1015(i2c)
 
-# |----|--Rvar--|
-# |    |        |
-# |    |        R2
-# |    |        |
-# |    |        ---|>|--*--P0
-# |    /        |
-# |    |        INA219
-# |    R3       |
-# Vcc  |        ---|>|--*--P2
-# |    |        |
-# |    |        R1
-# |    |        |
-# |----|-----|--|--|<|--*--P3
-#            |
-#            |--|<|--*--P1
+# |----|--INA219--|--*--P0
+# |    |          |
+# |    |          R2
+# |    |          |
+# |    /          |
+# |    |          |
+# |    R3         |
+# Vcc  |          ---*--P2
+# |    |          |
+# |    |          R1
+# |    |          |
+# |----|-----|----|---*--P3--P1
+#
+# |----|--INA219--|--*--P0
+# |    |          |
+# |    /          R4
+# Vcc  |          |
+# |    |          |---*--P2
+# |    |          |
+# |    R5         ---|>|--|>|--|>|--|
+# |    |                            |
+# |----|----------------------------|--*--P3--P1
+#
 # Vcc = 9v battery + 7805
 # R3 creates a current divider with resistance = R1 + R2
 # R2 & R1 used to create a 3.3 volt volage divider
-# Place INA219, in series, behind a resistor, just in case
+# Place INA219, in series
 # '*' are sample points for 5 and 3.3 volts ADS1015
-# Rvar controls volage divider (should be 0 ohm normally)
 # R1 = 4700 ohm, R2 = 9100 ohm, R3 = 13800 ohm + on/off switch
 # Selecting correct value resistors important to current
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
@@ -60,7 +67,10 @@ ads = ADS.ADS1015(i2c)
 # Integer constants are: ADS.P0, ADS.P1, ADS.P2, ADS.P3
 chan_5v = AnalogIn(ads, ADS.P0, ADS.P1)
 chan_3_3v = AnalogIn(ads, ADS.P2, ADS.P3)
-
+chan_p0 = AnalogIn(ads, ADS.P0)
+chan_p1 = AnalogIn(ads, ADS.P1)
+chan_p2 = AnalogIn(ads, ADS.P2)
+chan_p3 = AnalogIn(ads, ADS.P3)
 # https://docs.circuitpython.org/projects/ina219/en/latest/api.html
 # Create the INA219 object
 ina219 = adafruit_ina219.INA219(i2c)
@@ -73,10 +83,20 @@ while True:
     # This is 12 bit ADC, but the value will be put in a 16 bit int
     adc_value_5v = chan_5v.value
 
-    # voltage is a float
     adc_voltage_3_3v = chan_3_3v.voltage
-    # This is 12 bit ADC, but the value will be put in a 16 bit int
     adc_value_3_3v = chan_3_3v.value
+
+    adc_voltage_p0 = chan_p0.voltage
+    adc_value_p0 = chan_p0.value
+
+    adc_voltage_p1 = chan_p1.voltage
+    adc_value_p1 = chan_p1.value
+
+    adc_voltage_p2 = chan_p2.voltage
+    adc_value_p2 = chan_p2.value
+
+    adc_voltage_p3 = chan_p3.voltage
+    adc_value_p3 = chan_p3.value
 
 
     # Read the INA219 values for current
@@ -91,8 +111,21 @@ while True:
     # ADS1015
     print("ADC 5v Voltage: {:.2f}V".format(adc_voltage_5v))
     print("ADC 5v Value: {}".format(adc_value_5v))
+
     print("ADC 3.3v Voltage: {:.2f}V".format(adc_voltage_3_3v))
     print("ADC 3.3v Value: {}".format(adc_value_3_3v))
+
+    print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p0))
+    print("ADC Channel P0 Value: {}".format(adc_value_p0))
+
+    print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p1))
+    print("ADC Channel P0 Value: {}".format(adc_value_p1))
+
+    print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p2))
+    print("ADC Channel P0 Value: {}".format(adc_value_p2))
+
+    print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p3))
+    print("ADC Channel P0 Value: {}".format(adc_value_p3))
 
     print("--------------------")
 
