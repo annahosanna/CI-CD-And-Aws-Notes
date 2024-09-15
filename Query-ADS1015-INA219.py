@@ -58,17 +58,17 @@ ads = ADS.ADS1015(i2c, gain)
 # Voltage Divider Resistor Calculator
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
 # R1 = 4700, R2 = 9100
-# Vcc
+# Vcc/P0
 # |
 # R1
 # |
-# |--Vout--|
-# |        |
-# R2       Rl
-# |        |
-# |--------|
+# |--Vout--INA219--|
+# |                |
+# R2               Rl/P2
+# |                |
+# |----------------|
 # |
-# Gnd
+# Gnd/P1/P3
 # Voltage Divder Current
 # I = Vin/(R1+R2)
 # Current is the same across both resistors = I =It
