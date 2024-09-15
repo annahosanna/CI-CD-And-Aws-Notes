@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!~/Desktop/python-venv/bin/python3
 import time
 import board
 import busio
@@ -6,13 +6,11 @@ import adafruit_ads1x15.ads1015 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
 import adafruit_ina219
 
+# Prepare Raspberry Pi:
 # apt install python
 # apt install git
 # pip3 install --upgrade pip
-# Creat a virtual python environment:
 # python3 -m venv /path/to/new/virtual/environment
-# use the pip3 in the virtual environment to install python
-#   packages in the virtual environment
 # /path/to/new/virtual/environment/bin/pip3 install Adafruit-Blinka
 # /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ads1x15
 # /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ina219
@@ -21,52 +19,69 @@ import adafruit_ina219
 i2c = busio.I2C(board.SCL, board.SDA)
 
 # https://docs.circuitpython.org/projects/ads1x15/en/latest/api.html#adafruit_ads1x15.ads1015.ADS1015
-# Review constructor options: mode might need to be zero - Use circuit to test for 1 shot vs. continious.
-# You can also set a sample rate - does a higher sample rate take more power from pi?
+# Constructor
+# adafruit_ads1x15.ads1015.ADS1015(
+#   i2c: I2C,
+#   gain: float = 1,
+#   data_rate: int | None = None,
+#   mode: int = 256,
+#   comparator_queue_length: int = 0,
+#   comparator_low_threshold: int = -32768,
+#   comparator_high_threshold: int = 32767,
+#   comparator_mode: int = 0,
+#   comparator_polarity: int = 0,
+#   comparator_latch: int = 0,
+#   address: int = 72)
 #
 # Create the ADC object using the I2C bus
-ads = ADS.ADS1015(i2c)
+gain = 0.66
+ads = ADS.ADS1015(i2c, gain)
 
-# |----|--INA219--|--*--P0
-# |    |          |
-# |    |          R2
-# |    |          |
-# |    /          |
-# |    |          |
-# |    R3         |
-# Vcc  |          ---*--P2
-# |    |          |
-# |    |          R1
-# |    |          |
-# |----|-----|----|---*--P3--P1
-#
-# |----|--INA219--|--*--P0
-# |    |          |
-# |    /          R4
-# Vcc  |          |
-# |    |          |---*--P2
-# |    |          |
-# |    R5         ---|>|--|>|--|>|--|
-# |    |                            |
-# |----|----------------------------|--*--P3--P1
-#
-# Vcc = 9v battery + 7805
-# R3 creates a current divider with resistance = R1 + R2
-# R2 & R1 used to create a 3.3 volt volage divider
 # Place INA219, in series
-# '*' are sample points for 5 and 3.3 volts ADS1015
-# R1 = 4700 ohm, R2 = 9100 ohm, R3 = 13800 ohm + on/off switch
-# Selecting correct value resistors important to current
-# https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
-# E24 = 5% resistor rating
+# '*' are sample points for vcc and vout ADS1015
 # Sample ground to get realitive voltage, as it may float
-# Note: P0 - P3 are Vin, is gnd shared with ADC? That would mean the circiut must share a common ground with the pi
-# Put some diodes in so there is no back voltage sucked from sensor
+# Each sample point may only be used for one constructor
 
-# AnalogIn(ads: ADS1x15, positive_pin: int, negative_pin: int | None = None)
-# Integer constants are: ADS.P0, ADS.P1, ADS.P2, ADS.P3
-chan_5v = AnalogIn(ads, ADS.P0, ADS.P1)
-chan_3_3v = AnalogIn(ads, ADS.P2, ADS.P3)
+# Voltage regulator with .6 volt out per diode. (regardless of input voltage)
+# R1 = 2200 ohms (or whatever it takes to get current in diode operating range)
+# |----R1---|>|--|>|--|
+# |    |              |
+# *P0  |              |
+# |    Vout           |
+# Vcc  |              |
+#      *P2            |
+#      |              |
+#      |--INA219--|   |
+#                 |   |
+#                 |---|--*P1--*P3--Gnd
+#
+# Voltage Divider Resistor Calculator
+# https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
+# R1 = 4700, R2 = 9100
+# Vcc
+# |
+# R1
+# |
+# |--Vout--|
+# |        |
+# R2       Rl
+# |        |
+# |--------|
+# |
+# Gnd
+# Voltage Divder Current
+# I = Vin/(R1+R2)
+# Current is the same across both resistors = I =It
+# Next a load is connected in parallel to R2
+# Use current divider formula for a parallel circuit
+# Rload, R2, Itotal, Iload
+# Il = It * ((1/Rl)/((1/Rl)+(1/R2)))
+# Vl = Il * Rl
+#
+# Because Vload varies with Rload, but not R2 then it makes calculating Vload hard - So use gain
+
+chan_vcc = AnalogIn(ads, ADS.P0, ADS.P1)
+chan_vout = AnalogIn(ads, ADS.P2, ADS.P3)
 chan_p0 = AnalogIn(ads, ADS.P0)
 chan_p1 = AnalogIn(ads, ADS.P1)
 chan_p2 = AnalogIn(ads, ADS.P2)
@@ -79,12 +94,12 @@ while True:
     # Read the ADC value from ADS1015
 
     # voltage is a float
-    adc_voltage_5v = chan_5v.voltage
+    adc_voltage_vcc = chan_vcc.voltage
     # This is 12 bit ADC, but the value will be put in a 16 bit int
-    adc_value_5v = chan_5v.value
+    adc_value_vcc = chan_vcc.value
 
-    adc_voltage_3_3v = chan_3_3v.voltage
-    adc_value_3_3v = chan_3_3v.value
+    adc_voltage_vout = chan_vout.voltage
+    adc_value_vout = chan_vout.value
 
     adc_voltage_p0 = chan_p0.voltage
     adc_value_p0 = chan_p0.value
@@ -109,11 +124,11 @@ while True:
     # Print the results
     print("--------------------")
     # ADS1015
-    print("ADC 5v Voltage: {:.2f}V".format(adc_voltage_5v))
-    print("ADC 5v Value: {}".format(adc_value_5v))
+    print("ADC 5v Voltage: {:.2f}V".format(adc_voltage_vcc))
+    print("ADC 5v Value: {}".format(adc_value_vcc))
 
-    print("ADC 3.3v Voltage: {:.2f}V".format(adc_voltage_3_3v))
-    print("ADC 3.3v Value: {}".format(adc_value_3_3v))
+    print("ADC 3.3v Voltage: {:.2f}V".format(adc_voltage_vout))
+    print("ADC 3.3v Value: {}".format(adc_value_vout))
 
     print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p0))
     print("ADC Channel P0 Value: {}".format(adc_value_p0))
