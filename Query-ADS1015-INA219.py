@@ -17,7 +17,6 @@ import adafruit_ina219
 
 # Create the I2C bus
 i2c = busio.I2C(board.SCL, board.SDA)
-
 # https://docs.circuitpython.org/projects/ads1x15/en/latest/api.html#adafruit_ads1x15.ads1015.ADS1015
 # Constructor
 # adafruit_ads1x15.ads1015.ADS1015(
@@ -34,8 +33,13 @@ i2c = busio.I2C(board.SCL, board.SDA)
 #   address: int = 72)
 #
 # Create the ADC object using the I2C bus
+# Set gain to shrink 5v -> 3v3
 gain = 0.66
-ads = ADS.ADS1015(i2c, gain)
+# Pass by parameter name, except it does not seem to be duck typing i2c yet
+# so pass it positionally
+ads = ADS.ADS1015(i2c, gain=gain)
+# Pass by first position
+# ads = ADS.ADS1015(i2c)
 
 # Place INA219, in series
 # '*' are sample points for vcc and vout ADS1015
@@ -44,16 +48,13 @@ ads = ADS.ADS1015(i2c, gain)
 
 # Voltage regulator with .6 volt out per diode. (regardless of input voltage)
 # R1 = 2200 ohms (or whatever it takes to get current in diode operating range)
-# |----R1---|>|--|>|--|
-# |    |              |
-# *P0  |              |
-# |    Vout           |
-# Vcc  |              |
-#      *P2            |
-#      |              |
-#      |--INA219--|   |
-#                 |   |
-#                 |---|--*P1--*P3--Gnd
+# |--R1---|>|--|>|--|
+# |     |           |
+# *P0   Vout        |
+# |     |           |
+# Vcc   *P2         |
+#       |           |
+#       |--INA219---|--*P1--*P3--Gnd
 #
 # Voltage Divider Resistor Calculator
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
@@ -64,21 +65,21 @@ ads = ADS.ADS1015(i2c, gain)
 # |
 # |--Vout--INA219--|
 # |                |
-# R2               Rl/P2
+# R2               Rload/P2
 # |                |
 # |----------------|
 # |
 # Gnd/P1/P3
 # Voltage Divder Current
-# I = Vin/(R1+R2)
-# Current is the same across both resistors = I =It
+# Itotal = Vin/(R1+R2)
+# Current is the same across both resistors (Itotal)
 # Next a load is connected in parallel to R2
 # Use current divider formula for a parallel circuit
-# Rload, R2, Itotal, Iload
-# Il = It * ((1/Rl)/((1/Rl)+(1/R2)))
-# Vl = Il * Rl
+# Iload = Itotal * ((1/Rload)/((1/Rload)+(1/R2)))
+# Vload = Iload * Rload
 #
-# Because Vload varies with Rload, but not R2 then it makes calculating Vload hard - So use gain
+# Because Vload varies with Rload, calculating Vload is hard if you do not know Rload.
+# So use gain
 
 chan_vcc = AnalogIn(ads, ADS.P0, ADS.P1)
 chan_vout = AnalogIn(ads, ADS.P2, ADS.P3)
@@ -124,11 +125,11 @@ while True:
     # Print the results
     print("--------------------")
     # ADS1015
-    print("ADC 5v Voltage: {:.2f}V".format(adc_voltage_vcc))
-    print("ADC 5v Value: {}".format(adc_value_vcc))
+    print("ADC Vcc Voltage: {:.2f}V".format(adc_voltage_vcc))
+    print("ADC Vcc Value: {}".format(adc_value_vcc))
 
-    print("ADC 3.3v Voltage: {:.2f}V".format(adc_voltage_vout))
-    print("ADC 3.3v Value: {}".format(adc_value_vout))
+    print("ADC Vout Voltage: {:.2f}V".format(adc_voltage_vout))
+    print("ADC Vout Value: {}".format(adc_value_vout))
 
     print("ADC Channel P0 Voltage: {:.2f}V".format(adc_voltage_p0))
     print("ADC Channel P0 Value: {}".format(adc_value_p0))
