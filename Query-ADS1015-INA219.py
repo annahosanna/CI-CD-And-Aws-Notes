@@ -80,6 +80,50 @@ ads = ADS.ADS1015(i2c, gain=gain)
 #
 # Because Vload varies with Rload, calculating Vload is hard if you do not know Rload.
 # So use gain
+#
+#
+# Assignment:
+# Measure flat sat raw battery voltage
+# Mesure flat sat EPS battery current
+# Measurement must be able to be bi-directional
+# Measure 5v and 3.3v supplies
+# Interface via H1/H2 connector
+# Isolate measurement using 2 KOhm to 10 KOhm
+# Note: pins cannot supply more than 2 mA, so target 1.25 mA
+#   V = I * R --> V/I = R
+#   3.3/0.00125 = 2.640 KOhm
+#   5/0.00125 =
+# 4 or more samples per second
+# Store values with a time tag to in a CSV file
+#   time, input, type, value
+# Should provide an LED that a measured voltage is present
+# Should Display values to the screen
+# Build in KiCAD or some other way to show Dave design.
+#
+# Will the INA219 work with this circuit - or will it just measure this circuit?
+# Vcc
+# |
+# R1
+# |
+# INA219
+# |
+# |--Vout--R2--LED--------|
+# |                       |
+# |---|>|---|>|--Gnd------|
+#
+# But if Gnd and Vcc are switched
+# Could do a voltage divider with R1 = R2 so the circuit is symetric
+# but how would Vout know where Gnd was?
+#
+# Bridge Circuit (must have diodes or the whole thing will cancel out)
+# |---------Vcc/Gnd-----------|
+# |                           |--|>|--|
+# R1                                  R1
+# |----Vout--INA219--R2--LED----------|
+# R1                                  R1
+# |                           |--|>|--|
+# |--------Gnd/Vcc------------|
+#
 
 chan_vcc = AnalogIn(ads, ADS.P0, ADS.P1)
 chan_vout = AnalogIn(ads, ADS.P2, ADS.P3)
