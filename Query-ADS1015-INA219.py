@@ -1,4 +1,4 @@
-#!~/Desktop/python-venv/bin/python3
+#!/path/to/new/virtual/environment/bin/python3
 import time
 import board
 import busio
@@ -45,31 +45,12 @@ ads = ADS.ADS1015(i2c, gain=gain)
 # '*' are sample points for vcc and vout ADS1015
 # Sample ground to get realitive voltage, as it may float
 # Each sample point may only be used for one constructor
-
+# The FlatStat will not share a common ground, so take the voltage difference
 # Voltage regulator with .6 volt out per diode. (regardless of input voltage)
 # R1 = 2200 ohms (or whatever it takes to get current in diode operating range)
-# |--R1---|>|--|>|--|
-# |     |           |
-# *P0   Vout        |
-# |     |           |
-# Vcc   *P2         |
-#       |           |
-#       |--INA219---|--*P1--*P3--Gnd
-#
 # Voltage Divider Resistor Calculator
 # https://www.ti.com/download/kbase/volt/volt_div3.htm#:~:text=Proble,or%20as%20few%20as%20one.
-# R1 = 4700, R2 = 9100
-# Vcc/P0
-# |
-# R1
-# |
-# |--Vout--INA219--|
-# |                |
-# R2               Rload/P2
-# |                |
-# |----------------|
-# |
-# Gnd/P1/P3
+# R1 = 4700, R2 = 9100?
 # Voltage Divder Current
 # Itotal = Vin/(R1+R2)
 # Current is the same across both resistors (Itotal)
@@ -77,11 +58,12 @@ ads = ADS.ADS1015(i2c, gain=gain)
 # Use current divider formula for a parallel circuit
 # Iload = Itotal * ((1/Rload)/((1/Rload)+(1/R2)))
 # Vload = Iload * Rload
-#
 # Because Vload varies with Rload, calculating Vload is hard if you do not know Rload.
 # So use gain
-#
-#
+# watts = V*I = I*I*R
+# R = V/I
+# 5v @ .25 watt; W/V = I; W/(I*I) = R; R = (W/1)/((W/V)*(W/V)) = W/1*V/W*V/W = V*V/W
+# So in order not to cook my resistor R >= 100
 # Assignment:
 # Measure flat sat raw battery voltage
 # Mesure flat sat EPS battery current
@@ -92,39 +74,96 @@ ads = ADS.ADS1015(i2c, gain=gain)
 # Note: pins cannot supply more than 2 mA, so target 1.25 mA
 #   V = I * R --> V/I = R
 #   3.3/0.00125 = 2.640 KOhm
-#   5/0.00125 =
+#   5/0.00125 = 4.000 KOhm
 # 4 or more samples per second
 # Store values with a time tag to in a CSV file
-#   time, input, type, value
+#   time, input, type, value (or multiple files)
 # Should provide an LED that a measured voltage is present
 # Should Display values to the screen
 # Build in KiCAD or some other way to show Dave design.
 #
-# Will the INA219 work with this circuit - or will it just measure this circuit?
-# Vcc
-# |
-# R1
-# |
-# INA219
-# |
-# |--Vout--R2--LED--------|
-# |                       |
-# |---|>|---|>|--Gnd------|
+# Bridge Circuit almost (must have diodes, otherwise equal R1 will cancel out)
+# INA219 can only measure positive voltage up to 29v
+# 2200 ohm resistors
+# |---Vcc/Gnd----R1--|<|--|
+# R1                      |
+# |----Vout--INA219-------|
+# R1                      |
+# |---Gnd/Vcc----R1--|<|--|
 #
-# But if Gnd and Vcc are switched
-# Could do a voltage divider with R1 = R2 so the circuit is symetric
-# but how would Vout know where Gnd was?
 #
-# Bridge Circuit (must have diodes or the whole thing will cancel out)
-# |---------Vcc/Gnd-----------|
-# |                           |--|>|--|
-# R1                                  R1
-# |----Vout--INA219--R2--LED----------|
-# R1                                  R1
-# |                           |--|>|--|
-# |--------Gnd/Vcc------------|
+# ADC1015 can measure positive or negitive voltage up to 4v
+# Probably can just put in a resistor before the point you are sampling
+# 4700 Ohm
 #
+# f.close in finally
+# f = open('workfile', 'w', encoding="utf-8")
+# "a" if file already exists and you do not want to overwrite it
+# try:
+#    TARGET = value
+#    SUITE
+#except:
+#    hit_except = True
+#    if not exit(manager, *sys.exc_info()):
+#        raise
+#finally:
+#    if not hit_except:
+#        exit(manager, None, None, None)
+# file_path = "example.txt"
+# if os.path.exists(file_path):
+#    print(f"File {file_path} already exists.")
+#else:
+#    print(f"File {file_path} does not exist. Creating it.")
+# Write data to the file
+#data = "This is some example data to write to the file."
+#with open(file_path, "w") as file:
+#    file.write(data)
+# # Function to get current timestamp in milliseconds
+# def get_timestamp_ms():
+#     return int(time.time() * 1000)
 
+# Write timestamps to the file
+# with open(timestamp_file, "w") as file:
+#     for _ in range(10):  # Write 10 timestamps as an example
+#         timestamp = get_timestamp_ms()
+#         file.write(f"{timestamp}\n")
+#         time.sleep(0.1)  # Wait 100ms between timestamps
+#print(f"Timestamps have been written to {timestamp_file}.")
+# print(f"Data has been written to {file_path}.")
+# class Example:
+#     def __init__(self):
+#         self.value = 0
+
+#     def increment(self):
+#         self.value += 1
+
+#     def get_value(self):
+#         return self.value
+
+# # Usage
+# obj = Example()
+# obj.increment()
+# print(obj.get_value())
+#
+# Create an array with multiple types of objects
+# mixed_array = [42, "Hello", 3.14, True, [1, 2, 3], {"name": "John", "age": 30}]
+
+# # Iterate over the array
+# for item in mixed_array:
+#     print(f"Type: {type(item)}, Value: {item}")
+# # Initialize an empty array
+# my_array = []
+
+# # Append data to the array using the append() method
+# my_array.append(42)
+# my_array.append("Hello")
+# my_array.append([1, 2, 3])
+
+# # Alternatively, use the extend() method to append multiple items at once
+# my_array.extend([4, 5, 6])
+
+# # Print the updated array
+# print(my_array)
 chan_vcc = AnalogIn(ads, ADS.P0, ADS.P1)
 chan_vout = AnalogIn(ads, ADS.P2, ADS.P3)
 chan_p0 = AnalogIn(ads, ADS.P0)
@@ -135,6 +174,38 @@ chan_p3 = AnalogIn(ads, ADS.P3)
 # Create the INA219 object
 ina219 = adafruit_ina219.INA219(i2c)
 
+# Try:
+#   Open files
+#   create array of channel objects
+#   While
+#     foreach object in objects
+#       out = object.get_string(channel)
+#       write(file,string)
+# Except:
+#   print "panic"
+# Finally:
+#   foreach obect in objects
+#     object.closefile()
+#
+# class ExampleClass:
+#     def __init__(self):
+#         print("Constructor called")
+#         raise Exception("Exception raised in constructor")
+
+#     def __del__(self):
+#         print("Destructor called")
+#         raise Exception("Exception raised in destructor")
+
+# try:
+#     obj = ExampleClass()
+# except Exception as e:
+#     print(f"Caught exception: {e}")
+
+# # The destructor will be called when the object goes out of scope
+# # or when it's explicitly deleted
+# del obj
+# Use pin pairs A0+A1,A2+A3
+# Gain can be 2/3 to allow ~ 6volts
 while True:
     # Read the ADC value from ADS1015
 
