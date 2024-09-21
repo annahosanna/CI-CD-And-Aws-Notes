@@ -18,7 +18,7 @@ import adafruit_ina219
 # https://docs.circuitpython.org/projects/ads1x15/en/latest/api.html#adafruit_ads1x15.ads1015.ADS1015
 
 class ads_object:
-  def __init__(self, ads:ADS.ADS1015, positive_pin:int, negitive_pin:int, path:str|None):
+  def __init__(self, ads:ADS.ADS1015, positive_pin:int, negitive_pin:int, path:str|None=None):
     self.ads = ads
     self.gain = self.ads.gain
     self.out = ""
@@ -49,7 +49,7 @@ class ads_object:
     self.write_to_file()
 
 class ina_object:
-  def __init__(self, ina:adafruit_ina219.INA219, path:str|None):
+  def __init__(self, ina:adafruit_ina219.INA219, path:str|None=None):
     self.ina = ina
     self.out = ""
     self.file_path = ""
@@ -90,8 +90,6 @@ object_array.append(ads_object_5v)
 ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
 ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, path="./out_3_3v.csv")
 object_array.append(ads_object_3_3v)
-
-
 
 # Create the INA219 objects
 # Addresses: Default = 0x40 = 64, A0 soldered = 0x41 = 65,
