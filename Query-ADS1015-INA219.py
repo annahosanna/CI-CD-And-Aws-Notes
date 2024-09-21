@@ -12,6 +12,10 @@ import adafruit_ina219
 # git config --global user.name "John Doe"
 # git config --global user.email johndoe@example.com
 # git config --global init.defaultBranch main
+# mkdir ~/.ssh
+# cd ~/.ssh
+# ssk-keygen -t ed25519
+# <log into github and add public key>
 # pip3 install --upgrade pip
 # python3 -m venv /path/to/new/virtual/environment
 # /path/to/new/virtual/environment/bin/pip3 install Adafruit-Blinka
