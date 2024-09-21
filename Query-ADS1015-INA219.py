@@ -36,8 +36,7 @@ class ads_object:
     with open(self.file_path, "a") as file:
       file.write(data)
   def create_output_string(self):
-    corrected_voltage=1/gain
-    adc_voltage = self.channel.voltage * 1/gain
+    adc_voltage = self.channel.voltage * 1/self.gain
     # adc_value = chan_vcc.value
     time_in_ms = int(time.time() * 1000)
     self.out = f"{time_in_ms},{adc_voltage}"
