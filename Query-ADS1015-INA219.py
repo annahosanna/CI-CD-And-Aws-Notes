@@ -9,6 +9,9 @@ import adafruit_ina219
 # Prepare Raspberry Pi:
 # apt install python
 # apt install git
+# git config --global user.name "John Doe"
+# git config --global user.email johndoe@example.com
+# git config --global init.defaultBranch main
 # pip3 install --upgrade pip
 # python3 -m venv /path/to/new/virtual/environment
 # /path/to/new/virtual/environment/bin/pip3 install Adafruit-Blinka
