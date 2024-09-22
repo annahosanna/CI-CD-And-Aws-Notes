@@ -38,7 +38,7 @@ class ads_object:
       cwd = os.getcwd()
       self.file_path = f"{cwd}{os.pathsep}ads_out_{self.positive_pin}_{self.negitive_pin}.csv"
     self.channel=AnalogIn(ads, positive_pin, negitive_pin)
-    data = f"time,voltage\n"
+    data = f"time_in_ms,voltage\n"
     with open(self.file_path, "w") as file:
       file.write(data)
   def write_to_file(self):
@@ -69,7 +69,7 @@ class ina_object:
       cwd = os.getcwd()
       addr = self.ina.i2c_addr
       self.file_path = f"{cwd}{os.pathsep}ina_out_{addr}.csv"
-    data = f"time,bus_voltage,shunt_voltage,current,power\n"
+    data = f"time_in_ms,bus_voltage,shunt_voltage,current,power\n"
     with open(self.file_path, "w") as file:
       file.write(data)
   def write_to_file(self):
@@ -81,6 +81,7 @@ class ina_object:
     shunt_voltage = self.ina.shunt_voltage
     current = self.ina.current
     power = self.ina.power
+    # Probably since unix epoch
     time_in_ms = int(time.time() * 1000)
     self.out = f"{time_in_ms},{bus_voltage},{shunt_voltage},{current},{power}"
   def display_on_screen(self):
