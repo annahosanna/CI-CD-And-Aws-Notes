@@ -41,6 +41,7 @@ class ads_object:
     data = f"time_in_ms,voltage\n"
     with open(self.file_path, "w") as file:
       file.write(data)
+    self.start_time = int(time.time() * 1000)
   def write_to_file(self):
     data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
@@ -49,7 +50,7 @@ class ads_object:
     ads_voltage = 0.0
     ads_voltage = self.channel.voltage
     # adc_value = chan_vcc.value
-    time_in_ms = int(time.time() * 1000)
+    time_in_ms = int(time.time() * 1000) - self.start_time
     self.out = f"{time_in_ms},{ads_voltage}"
   def display_on_screen(self):
       print(f"{self.out}")
@@ -72,6 +73,7 @@ class ina_object:
     data = f"time_in_ms,bus_voltage,shunt_voltage,current,power\n"
     with open(self.file_path, "w") as file:
       file.write(data)
+    self.start_time = int(time.time() * 1000)
   def write_to_file(self):
     data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
@@ -81,8 +83,7 @@ class ina_object:
     shunt_voltage = self.ina.shunt_voltage
     current = self.ina.current
     power = self.ina.power
-    # Probably since unix epoch
-    time_in_ms = int(time.time() * 1000)
+    time_in_ms = int(time.time() * 1000) - self.start_time
     self.out = f"{time_in_ms},{bus_voltage},{shunt_voltage},{current},{power}"
   def display_on_screen(self):
       print(f"{self.out}")
@@ -123,5 +124,4 @@ object_array.append(ina219_object_1)
 while True:
   for item in object_array:
     item.get_next_sample()
-
-  time.sleep(.25)
+  time.sleep(0.25)
