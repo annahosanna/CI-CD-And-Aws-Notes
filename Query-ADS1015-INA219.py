@@ -24,28 +24,48 @@ import adafruit_ina219
 
 # https://docs.circuitpython.org/projects/ads1x15/en/latest/api.html#adafruit_ads1x15.ads1015.ADS1015
 
+class find_unique_filename:
+  def __init__(self, base_name:str="_",base_path:str|None=None,extra_info:str="",suffix:str=""):
+    self.base_name = ""
+    self.base_path = ""
+    self.file_path = ""
+    self.temp_path = ""
+    self.file_increment = 0
+    self.base_name = base_name
+    self.extra_info = extra_info
+    self.suffix=suffix
+    if self.base_path is not None and os.path.isdir(self.base_path):
+      self.base_path = f"{self.base_path}{os.pathsep}"
+    else:
+      cwd = os.getcwd()
+      self.base_path = f"{cwd}{os.pathsep}"
+    self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}{self.suffix}"
+  def getname(self):
+    while os.path.exists(self.temp_path):
+      self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}_{self.file_increment}{self.suffix}"
+      self.file_increment = self.file_increment + 1
+    self.file_path = self.temp_path
+    return self.file_path
+
 class ads_object:
-  def __init__(self, ads:ADS.ADS1015, positive_pin:int, negitive_pin:int, path:str|None=None):
+  def __init__(self, ads:ADS.ADS1015, positive_pin:int, negitive_pin:int, base_name:str="_"):
     self.ads = ads
-    self.gain = self.ads.gain
     self.out = ""
     self.file_path = ""
     self.positive_pin = positive_pin
     self.negitive_pin = negitive_pin
-    if path is not None:
-      self.file_path = path
-    else:
-      cwd = os.getcwd()
-      self.file_path = f"{cwd}{os.pathsep}ads_out_{self.positive_pin}_{self.negitive_pin}.csv"
+    self.base_name = base_name
+    unique_name=find_unique_filename(base_name=self.base_name,extra_info=f"ads_out_{self.positive_pin}_{self.negitive_pin}",suffix=".csv")
+    self.file_path=unique_name.getname()
     self.channel=AnalogIn(ads, positive_pin, negitive_pin)
-    data = f"time_in_ms,voltage\n"
+    self.data = f"\"time_in_ms\",\"voltage\"\n"
     with open(self.file_path, "w") as file:
-      file.write(data)
+      file.write(self.data)
     self.start_time = int(time.time() * 1000)
   def write_to_file(self):
-    data = f"{self.out}\n"
+    self.data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
-      file.write(data)
+      file.write(self.data)
   def create_output_string(self):
     ads_voltage = 0.0
     ads_voltage = self.channel.voltage
@@ -60,17 +80,15 @@ class ads_object:
     self.write_to_file()
 
 class ina_object:
-  def __init__(self, ina:adafruit_ina219.INA219, path:str|None=None):
+  def __init__(self, ina:adafruit_ina219.INA219, base_name:str="_"):
     self.ina = ina
     self.out = ""
     self.file_path = ""
-    if path is not None:
-      self.file_path = path
-    else:
-      cwd = os.getcwd()
-      addr = self.ina.i2c_addr
-      self.file_path = f"{cwd}{os.pathsep}ina_out_{addr}.csv"
-    data = f"time_in_ms,bus_voltage,shunt_voltage,current,power\n"
+    self.base_name=base_name
+    addr = self.ina.i2c_addr
+    unique_name=find_unique_filename(base_name=self.base_name,extra_info=f"{addr}",suffix=".csv")
+    self.file_path=unique_name.getname()
+    data = f"\"time_in_ms\",\"bus_voltage\",\"shunt_voltage\",\"current,power\"\n"
     with open(self.file_path, "w") as file:
       file.write(data)
     self.start_time = int(time.time() * 1000)
@@ -96,14 +114,16 @@ i2c = busio.I2C(board.SCL, board.SDA)
 
 object_array = []
 
+# This is configured to overwrite you data file every time
+
 # Use pin pairs A0+A1,A2+A3
 # ADS Gain must literally be the value 2/3 to allow ~ 6volts
 ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
-ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, path="./out_5v.csv")
+ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="./out_5v.csv")
 object_array.append(ads_object_5v)
 
 ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
-ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, path="./out_3_3v.csv")
+ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="./out_3_3v.csv")
 object_array.append(ads_object_3_3v)
 
 # Create the INA219 objects
