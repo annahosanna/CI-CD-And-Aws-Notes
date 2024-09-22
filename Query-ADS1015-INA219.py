@@ -38,15 +38,19 @@ class ads_object:
       cwd = os.getcwd()
       self.file_path = f"{cwd}{os.pathsep}ads_out_{self.positive_pin}_{self.negitive_pin}.csv"
     self.channel=AnalogIn(ads, positive_pin, negitive_pin)
+    data = f"time,voltage\n"
+    with open(self.file_path, "w") as file:
+      file.write(data)
   def write_to_file(self):
     data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
       file.write(data)
   def create_output_string(self):
-    adc_voltage = self.channel.voltage * 1/self.gain
+    ads_voltage = 0.0
+    ads_voltage = self.channel.voltage
     # adc_value = chan_vcc.value
     time_in_ms = int(time.time() * 1000)
-    self.out = f"{time_in_ms},{adc_voltage}"
+    self.out = f"{time_in_ms},{ads_voltage}"
   def display_on_screen(self):
       print(f"{self.out}")
   def get_next_sample(self):
@@ -65,6 +69,9 @@ class ina_object:
       cwd = os.getcwd()
       addr = self.ina.i2c_addr
       self.file_path = f"{cwd}{os.pathsep}ina_out_{addr}.csv"
+    data = f"time,bus_voltage,shunt_voltage,current,power\n"
+    with open(self.file_path, "w") as file:
+      file.write(data)
   def write_to_file(self):
     data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
