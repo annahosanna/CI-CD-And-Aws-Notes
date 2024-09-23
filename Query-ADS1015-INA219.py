@@ -58,14 +58,14 @@ class ads_object:
     unique_name=find_unique_filename(base_name=self.base_name,extra_info=f"ads_out_{self.positive_pin}_{self.negitive_pin}",suffix=".csv")
     self.file_path=unique_name.getname()
     self.channel=AnalogIn(ads, positive_pin, negitive_pin)
-    self.data = f"\"time_in_ms\",\"voltage\"\n"
+    data = f"\"time_in_ms\",\"voltage\"\n"
     with open(self.file_path, "w") as file:
-      file.write(self.data)
+      file.write(data)
     self.start_time = int(time.time() * 1000)
   def write_to_file(self):
-    self.data = f"{self.out}\n"
+    data = f"{self.out}\n"
     with open(self.file_path, "a") as file:
-      file.write(self.data)
+      file.write(data)
   def create_output_string(self):
     ads_voltage = 0.0
     ads_voltage = self.channel.voltage
@@ -119,18 +119,18 @@ object_array = []
 # Use pin pairs A0+A1,A2+A3
 # ADS Gain must literally be the value 2/3 to allow ~ 6volts
 ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
-ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="./out_5v.csv")
+ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="out_5v")
 object_array.append(ads_object_5v)
 
 ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
-ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="./out_3_3v.csv")
+ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="out_3_3v")
 object_array.append(ads_object_3_3v)
 
 # Create the INA219 objects
 # Addresses: Default = 0x40 = 64, A0 soldered = 0x41 = 65,
 # A1 soldered = 0x44 = 68, A0 and A1 soldered = 0x45 = 69
 ina219_1 = adafruit_ina219.INA219(i2c, addr=64)
-ina219_object_1 = ina_object(ina219_1, "./out_ina219_1.csv")
+ina219_object_1 = ina_object(ina219_1, "out_ina219_1")
 object_array.append(ina219_object_1)
 
 # ina219_2 = adafruit_ina219.INA219(i2c, addr=65)
