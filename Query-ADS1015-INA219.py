@@ -114,8 +114,6 @@ i2c = busio.I2C(board.SCL, board.SDA)
 
 object_array = []
 
-# This is configured to overwrite you data file every time
-
 # Use pin pairs A0+A1,A2+A3
 # ADS Gain must literally be the value 2/3 to allow ~ 6volts
 ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
@@ -134,11 +132,11 @@ ina219_object_1 = ina_object(ina219_1, "out_ina219_1")
 object_array.append(ina219_object_1)
 
 # ina219_2 = adafruit_ina219.INA219(i2c, addr=65)
-# ina219_object_2 = ina_object(ina219_2, "./out_ina219_2.csv")
+# ina219_object_2 = ina_object(ina219_2, "out_ina219_2")
 # object_array.append(ina219_object_2)
 #
 # ina219_3 = adafruit_ina219.INA219(i2c, addr=68)
-# ina219_object_3 = ina_object(ina219_3, "./out_ina219_3.csv")
+# ina219_object_3 = ina_object(ina219_3, "out_ina219_3")
 # object_array.append(ina219_object_3)
 
 while True:
