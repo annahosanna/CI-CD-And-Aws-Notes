@@ -31,17 +31,8 @@ import adafruit_ina219
 # https://docs.circuitpython.org/projects/ina219/en/stable/
 
 class find_unique_filename:
-  """
-  The methods of this class create a unique filename
-  """
+  """Class to create a unique filename"""
   def __init__(self, base_name:str="_",base_path:str|None=None,extra_info:str="",suffix:str=""):
-    """
-    Parameters:
-    base_name (str): The name of the file without a suffix. Default is _
-    base_path (str): The path the file should be created in. Default is cwd
-    extra_info (str): Extra string to concatinate to the base filename
-    suffix (str): A suffix which should start with a period
-    """
     self.base_name = ""
     self.base_path = ""
     self.file_path = ""
@@ -57,10 +48,7 @@ class find_unique_filename:
       self.base_path = f"{cwd}{os.pathsep}"
     self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}{self.suffix}"
   def getname(self):
-    """
-    Build the filename
-    Returns str: file_name
-    """
+    """Build the filename and return it"""
     while os.path.exists(self.temp_path):
       self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}_{self.file_increment}{self.suffix}"
       self.file_increment = self.file_increment + 1
@@ -68,17 +56,8 @@ class find_unique_filename:
     return self.file_path
 
 class ads_object:
-  """
-  Class responsible for querying the ADS and then writing data to a file and the screen.
-  """
+  """Class responsible for querying the ADS and then writing data to a file and the screen."""
   def __init__(self, ads:ADS.ADS1015, positive_pin:int, negitive_pin:int, base_name:str="_"):
-    """
-    Parameters:
-    ads (ADS.ADS1015): The ADS of interest
-    positive_pin (int): The positive pin to use for the difference
-    negitive_pin (int): The negitive pin to use for the difference
-    base_name (str): The base name of the file to create in the cwd
-    """
     self.ads = ads
     self.out = ""
     self.file_path = ""
@@ -105,20 +84,14 @@ class ads_object:
   def display_on_screen(self):
       print(f"{self.out}")
   def get_next_sample(self):
+    """Method responsible for querying the ADS and displaying the output"""
     self.create_output_string()
     self.display_on_screen()
     self.write_to_file()
 
 class ina_object:
-  """
-  Class responsible for querying the INA and then writing data to a file and the screen.
-  """
+  """Class responsible for querying the INA and then writing data to a file and the screen."""
   def __init__(self, ina:adafruit_ina219.INA219, base_name:str="_"):
-    """
-    Parameters:
-    ina (adafruit_ina219.INA219): The ina of interest
-    base_name (str): The base name of the file to create in the cwd
-    """
     self.ina = ina
     self.out = ""
     self.file_path = ""
@@ -144,6 +117,7 @@ class ina_object:
   def display_on_screen(self):
       print(f"{self.out}")
   def get_next_sample(self):
+    """Method responsible for querying the INA and displaying the output"""
     self.create_output_string()
     self.display_on_screen()
     self.write_to_file()
