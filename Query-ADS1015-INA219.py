@@ -27,9 +27,32 @@ import adafruit_ina219
 # /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ads1x15
 # /path/to/new/virtual/environment/bin/pip3 install adafruit-circuitpython-ina219
 
+# Documentation:
 # https://docs.circuitpython.org/projects/ads1x15/en/stable/
 # https://docs.circuitpython.org/projects/ina219/en/stable/
 
+# Basic formulas:
+# Watts = V*I = I^2 * R = V^2/R
+# R = V * I/I^2 = V/I = V^2/Watts = Watts/I^2
+# V = I*R = Watts/I
+# I = V/R = Watts/V
+
+# From this: A quater watt resistor at 5 volts must have a resistance of at least 100 ohm
+# However:
+# Based on GPIO limitations per pin:
+# 3.3v * .017 amps = .0561 watts max per pin max. Min R equals about 200 ohm
+# 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm
+
+# This has a bug in that it doesn't try to parse a file path for directory information
+# filepath = "/home/user/documents/example.txt"
+
+# Get the directory name
+# dirname = os.path.dirname(filepath)
+# print(dirname)
+
+# # Get the base filename
+# basename = os.path.basename(filepath)
+# print(basename)
 class find_unique_filename:
   """Class to create a unique filename"""
   def __init__(self, base_name:str="_",base_path:str|None=None,extra_info:str="",suffix:str=""):
@@ -82,7 +105,7 @@ class ads_object:
     time_in_ms = int(time.time() * 1000) - self.start_time
     self.out = f"{time_in_ms},{ads_voltage}"
   def display_on_screen(self):
-      print(f"{self.out}")
+    print(f"{self.out}")
   def get_next_sample(self):
     """Method responsible for querying the ADS and displaying the output"""
     self.create_output_string()
@@ -115,7 +138,7 @@ class ina_object:
     time_in_ms = int(time.time() * 1000) - self.start_time
     self.out = f"{time_in_ms},{bus_voltage},{shunt_voltage},{current},{power}"
   def display_on_screen(self):
-      print(f"{self.out}")
+    print(f"{self.out}")
   def get_next_sample(self):
     """Method responsible for querying the INA and displaying the output"""
     self.create_output_string()
