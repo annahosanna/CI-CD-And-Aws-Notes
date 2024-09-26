@@ -43,18 +43,6 @@ import adafruit_ina219
 # 3.3v * .017 amps = .0561 watts max per pin max. Min R equals about 200 ohm
 # 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm
 
-# This has a bug in that it doesn't try to parse a file path for directory information
-# filepath = "/home/user/documents/example.txt"
-
-# Get the directory name
-# dirname = os.path.dirname(filepath)
-# print(dirname)
-
-# # Get the base filename
-dirname, filename = os.path.split("")
-# basename = os.path.basename(filepath)
-# print(basename)
-#
 # Base name should include full path and extra info
 class find_unique_filename:
   """Class to create a unique filename"""
