@@ -51,29 +51,28 @@ import adafruit_ina219
 # print(dirname)
 
 # # Get the base filename
+dirname, filename = os.path.split("")
 # basename = os.path.basename(filepath)
 # print(basename)
+#
+# Base name should include full path and extra info
 class find_unique_filename:
   """Class to create a unique filename"""
-  def __init__(self, base_name:str="_",base_path:str|None=None,extra_info:str="",suffix:str=""):
-    self.base_name = ""
+  def __init__(self, base_name:str="__",suffix:str=""):
     self.base_path = ""
+    self.base_name = ""
+    self.base_path, self.base_name = os.path.split(base_name)
     self.file_path = ""
     self.temp_path = ""
     self.file_increment = 0
-    self.base_name = base_name
-    self.extra_info = extra_info
     self.suffix=suffix
-    if self.base_path is not None and os.path.isdir(self.base_path):
-      self.base_path = f"{self.base_path}{os.pathsep}"
-    else:
-      cwd = os.getcwd()
-      self.base_path = f"{cwd}{os.pathsep}"
-    self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}{self.suffix}"
+    if self.base_path is "" or self.base_path is None or not os.path.isdir(self.base_path):
+      self.base_path = f"{os.getcwd()}{os.pathsep}"
+    self.temp_path = f"{self.base_path}{self.base_name}{self.suffix}"
   def getname(self):
     """Build the filename and return it"""
     while os.path.exists(self.temp_path):
-      self.temp_path = f"{self.base_path}{self.base_name}_{self.extra_info}_{self.file_increment}{self.suffix}"
+      self.temp_path = f"{self.base_path}{self.base_name}_{self.file_increment}{self.suffix}"
       self.file_increment = self.file_increment + 1
     self.file_path = self.temp_path
     return self.file_path
@@ -87,7 +86,7 @@ class ads_object:
     self.positive_pin = positive_pin
     self.negitive_pin = negitive_pin
     self.base_name = base_name
-    unique_name=find_unique_filename(base_name=self.base_name,extra_info=f"ads_out_{self.positive_pin}_{self.negitive_pin}",suffix=".csv")
+    unique_name=find_unique_filename(base_name=f"{self.base_name}_ads_out_{self.positive_pin}_{self.negitive_pin}",suffix=".csv")
     self.file_path=unique_name.getname()
     self.channel=AnalogIn(ads, positive_pin, negitive_pin)
     data = f"\"time_in_ms\",\"voltage\"\n"
@@ -120,7 +119,7 @@ class ina_object:
     self.file_path = ""
     self.base_name=base_name
     addr = self.ina.i2c_addr
-    unique_name=find_unique_filename(base_name=self.base_name,extra_info=f"{addr}",suffix=".csv")
+    unique_name=find_unique_filename(base_name=f"{self.base_name}_{addr}",suffix=".csv")
     self.file_path=unique_name.getname()
     data = f"\"time_in_ms\",\"bus_voltage\",\"shunt_voltage\",\"current,power\"\n"
     with open(self.file_path, "w") as file:
