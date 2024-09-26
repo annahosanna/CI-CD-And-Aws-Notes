@@ -55,7 +55,8 @@ class find_unique_filename:
     self.file_increment = 0
     self.suffix=suffix
     if self.base_path is "" or self.base_path is None or not os.path.isdir(self.base_path):
-      self.base_path = f"{os.getcwd()}{os.pathsep}"
+      self.base_path = f"{os.getcwd()}"
+    self.base_path = f"{self.base_path}{os.pathsep}"
     self.temp_path = f"{self.base_path}{self.base_name}{self.suffix}"
   def getname(self):
     """Build the filename and return it"""
