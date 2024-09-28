@@ -52,6 +52,14 @@ import adafruit_ina219
 # Based on GPIO limitations per pin:
 # 3.3v * .017 amps = .0561 watts max per pin max. Min R equals about 200 ohm
 # 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm
+# The specs on the ADS1015 are so confusing. Seems like 10ma,
+# M RATINGS(1)
+# From the ADS1015 Datasheet:
+# VDD to GND –0.3 to +5.5 V
+# Analog input momentary current 100 mA
+# Analog input continuous current 10 mA (which means for 5v you actually need a 500 ohm resistor)
+# Analog input voltage to GND –0.3 to VDD + 0.3 V
+# VDD is measured against QWIC VDD, so max is 3.6 volts.
 
 # Base name should include full path and extra info
 class find_unique_filename:
@@ -151,30 +159,49 @@ i2c = busio.I2C(board.SCL, board.SDA)
 
 object_array = []
 
+# Can be configured with I2C addresses Default address 72, Soldered 73
+# 0x48: The default address, which is set when the address pin is connected to GND
+# 0x49: Set when the address pin is connected to VDD
+# 0x4A: Set when the address pin is connected to SDA
+# 0x4B: Set when the address pin is connected to SCL
 # Use pin pairs A0+A1,A2+A3
-# ADS Gain must literally be the value 2/3 to allow ~ 6volts
+# ADS Gain must literally be the float value 2/3 to allow ~ 6volts
+# Somehow when 3.3v and 5v are on, 5v measures 3.8
 ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
-ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="out_5v")
+ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
 object_array.append(ads_object_5v)
 
 ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
-ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="out_3_3v")
+ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
 object_array.append(ads_object_3_3v)
+
+ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
+ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
+object_array.append(ads_object_5v)
+
+ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
+ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
+object_array.append(ads_object_3_3v)
+
 
 # Create the INA219 objects
 # Addresses: Default = 0x40 = 64, A0 soldered = 0x41 = 65,
 # A1 soldered = 0x44 = 68, A0 and A1 soldered = 0x45 = 69
 ina219_1 = adafruit_ina219.INA219(i2c, addr=64)
-ina219_object_1 = ina_object(ina219_1, "out_ina219_1")
+ina219_object_1 = ina_object(ina219_1, "ina219_64")
 object_array.append(ina219_object_1)
 
 # ina219_2 = adafruit_ina219.INA219(i2c, addr=65)
-# ina219_object_2 = ina_object(ina219_2, "out_ina219_2")
+# ina219_object_2 = ina_object(ina219_2, "ina219_65")
 # object_array.append(ina219_object_2)
 #
 # ina219_3 = adafruit_ina219.INA219(i2c, addr=68)
-# ina219_object_3 = ina_object(ina219_3, "out_ina219_3")
+# ina219_object_3 = ina_object(ina219_3, "ina219_68")
 # object_array.append(ina219_object_3)
+#
+# ina219_4 = adafruit_ina219.INA219(i2c, addr=69)
+# ina219_object_4 = ina_object(ina219_4, "ina219_69")
+# object_array.append(ina219_object_4)
 
 while True:
   for item in object_array:
