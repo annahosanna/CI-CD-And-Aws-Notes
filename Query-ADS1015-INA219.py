@@ -129,7 +129,7 @@ class ina_object:
     addr = self.ina.i2c_addr
     unique_name=find_unique_filename(base_name=f"{self.base_name}_{addr}",suffix=".csv")
     self.file_path=unique_name.getname()
-    data = f"\"time_in_ms\",\"bus_voltage\",\"shunt_voltage\",\"current,power\"\n"
+    data = f"\"time_in_ms\",\"bus_voltage\",\"shunt_voltage\",\"current\",\"power\"\n"
     with open(self.file_path, "w") as file:
       file.write(data)
     self.start_time = int(time.time() * 1000)
@@ -165,7 +165,7 @@ object_array = []
 # Use pin pairs A0+A1,A2+A3 for reference
 # ADS Gain must literally be the float value 2/3 to allow ~ 6volts
 # Somehow when 3.3v and 5v are on, 5v measures 3.8
-ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
+ads_5v = ADS.ADS1015(i2c, gain=1, address=72)
 ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
 object_array.append(ads_object_5v)
 
