@@ -51,15 +51,15 @@ import adafruit_ina219
 # However:
 # Based on GPIO limitations per pin:
 # 3.3v * .017 amps = .0561 watts max per pin max. Min R equals about 200 ohm
-# 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm
+# 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm (but see below)
 # The specs on the ADS1015 are so confusing. Seems like 10ma,
 # M RATINGS(1)
 # From the ADS1015 Datasheet:
-# VDD to GND –0.3 to +5.5 V
+# VDD to GND –0.3 to +0.3 - using whatever volatage qwic is - 3.3 volts. (So 3.0 to 3.6)
 # Analog input momentary current 100 mA
-# Analog input continuous current 10 mA (which means for 5v you actually need a 500 ohm resistor)
-# Analog input voltage to GND –0.3 to VDD + 0.3 V
-# VDD is measured against QWIC VDD, so max is 3.6 volts.
+# Analog input continuous current 10 mA (which means for 5.2v you actually need at least a 520 ohm resistor)
+# For this experiment the 3.3v lead has a 500 ohm resistor
+# The 5.2 volt lead has a 500 followed by a 4700 followed by a voltage divider followed by 2 4700.
 
 # Base name should include full path and extra info
 class find_unique_filename:
@@ -176,11 +176,11 @@ ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3
 object_array.append(ads_object_3_3v)
 
 # ads_5v = ADS.ADS1015(i2c, gain=2/3, address=73)
-# ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
+# ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_73_5v")
 # object_array.append(ads_object_5v)
 
 # ads_3_3v = ADS.ADS1015(i2c, gain=1, address=73)
-# ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
+# ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_73_3_3v")
 # object_array.append(ads_object_3_3v)
 
 
