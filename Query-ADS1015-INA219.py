@@ -49,17 +49,15 @@ import adafruit_ina219
 
 # From this: A quater watt resistor at 5 volts must have a resistance of at least 100 ohm
 # However:
-# Based on GPIO limitations per pin:
-# 3.3v * .017 amps = .0561 watts max per pin max. Min R equals about 200 ohm
-# 5v * .01122 amps =.0561 watts. Min R equals about 450 ohm (but see below)
-# The specs on the ADS1015 are so confusing. Seems like 10ma,
-# M RATINGS(1)
+# Based on GPIO limitations per pin. 50 mA total for all of the GPIO pins:
+# 3.3v * .017 amps = .0561 watts max per pin max. Min Resistance equals about 200 ohm
+# 5v * .01122 amps =.0561 watts. Min Resistance equals about 450 ohm (but see below)
 # From the ADS1015 Datasheet:
-# VDD to GND –0.3 to +0.3 - using whatever volatage qwic is - 3.3 volts. (So 3.0 to 3.6)
+# VDD to GND –0.3 to +0.3 - using whatever volatage qwic is thus 3.3 volts. (So 3.0 to 3.6)
 # Analog input momentary current 100 mA
 # Analog input continuous current 10 mA (which means for 5.2v you actually need at least a 520 ohm resistor)
 # For this experiment the 3.3v lead has a 500 ohm resistor
-# The 5.2 volt lead has a 500 followed by a 4700 followed by a voltage divider followed by 2 4700.
+# The 5.2 volt lead has a 500 ohm followed by a 4700 ohm followed by a voltage divider followed by 2 4700 ohm.
 
 # Base name should include full path and extra info
 class find_unique_filename:
