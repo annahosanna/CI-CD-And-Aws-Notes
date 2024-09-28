@@ -164,7 +164,7 @@ object_array = []
 # 0x49: Set when the address pin is connected to VDD
 # 0x4A: Set when the address pin is connected to SDA
 # 0x4B: Set when the address pin is connected to SCL
-# Use pin pairs A0+A1,A2+A3
+# Use pin pairs A0+A1,A2+A3 for reference
 # ADS Gain must literally be the float value 2/3 to allow ~ 6volts
 # Somehow when 3.3v and 5v are on, 5v measures 3.8
 ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
@@ -175,13 +175,13 @@ ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
 ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
 object_array.append(ads_object_3_3v)
 
-ads_5v = ADS.ADS1015(i2c, gain=2/3, address=72)
-ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
-object_array.append(ads_object_5v)
+# ads_5v = ADS.ADS1015(i2c, gain=2/3, address=73)
+# ads_object_5v = ads_object(ads_5v, ADS.P0, ADS.P1, base_name="ADS1015_72_5v")
+# object_array.append(ads_object_5v)
 
-ads_3_3v = ADS.ADS1015(i2c, gain=1, address=72)
-ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
-object_array.append(ads_object_3_3v)
+# ads_3_3v = ADS.ADS1015(i2c, gain=1, address=73)
+# ads_object_3_3v = ads_object(ads_3_3v, ADS.P2, ADS.P3, base_name="ADS1015_72_3_3v")
+# object_array.append(ads_object_3_3v)
 
 
 # Create the INA219 objects
